@@ -1,0 +1,79 @@
+
+.dark-panel {
+	position: absolute;
+	background: transparent url(img/dark_panel.png) repeat scroll;
+}
+
+.bottom-panel {
+	bottom:0;
+	height:auto;
+	left:0;
+	width:750px;
+}
+
+.home-last-stories img {
+	position: relative;
+	display: block;
+}
+.home-last-stories .dark-panel h1 {
+	font-size: 20px;
+	line-height: 24px;
+	color: #F28E00;
+	font-weight:bold;
+	padding: 10px;
+}
+
+.home-last-stories a{
+	color: #F60;
+}
+
+.home-last-stories p {
+	font-size: 14px;
+	color: #EEE;
+	padding: 0px 10px;
+	float:left;
+	width:650px;
+}
+
+.home-last-stories {
+	position: relative;
+	float:left;
+	box-shadow: -1px 3px 3px 1px #999;
+	margin: 5px;
+}
+
+h3.home-block-title {
+	background: #6AD; /*#4183AF 94CE18*/
+	color:#FFFFFF;
+	font-size:1.3em;
+	text-transform: lowercase;
+	padding:3px 0px 3px 6px;
+	text-align:left;
+	margin: 2px -4px 0px -4px;
+}
+
+li.home-wall-message {
+	background: none;
+	padding: 0px;
+}
+
+li.odd {
+	background: #EEEEEE;
+}
+
+div.home-wall-text{
+	float:left;
+	width: 270px;
+	display: block;
+}
+
+div.home-wall-picture{
+	float:left;
+	width: 60px;
+	display: block;
+}
+
+#content-left #groups,
+#content-right #groups{
+  margin: -10px;
+}

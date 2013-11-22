@@ -1,0 +1,7 @@
+; $Id: fantacalcio.info,v 1.5 2007/06/08 05:50:53 dries Exp $
+name = Fantacalcio
+description = Gestione completa di una lega di Fantacalcio.
+author = Sauro Ruggeri
+version = 6.x-1.0
+core = 6.x
+

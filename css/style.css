@@ -1,0 +1,507 @@
+/* $Id: fantacalcio.css,v 1.1.2.6 2009/03/05 03:27:27 sauro Exp $ */
+
+.selected{
+	font-weight:bold;
+}
+
+#teams{
+	float: left;
+	position: relative;
+	width: 200px;
+}
+
+#actions {
+	float: left;
+	position: relative;
+	width: 150px;
+}
+#data {
+	float: left;
+	position: relative;
+	max-width: 549px;
+	border-left: 1px #ccc solid;
+	padding:10px;
+}
+
+table .rosa {
+	cellspacing: 3px;
+	cellpadding: 5px;
+}
+
+.rosa tr td{
+	margin: 5px;
+}
+
+tr.role_0, tr.role_0 {
+	background-color: #EEEEEE;
+}
+
+tr.role_1, tr.role_1 {
+	background-color: #C5E5E7;
+}
+
+tr.role_2, tr.role_2 {
+	background-color: #E9F5F5;
+}
+
+tr.role_3, tr.role_3 { 
+	background-color: #d5f5f7;
+}
+
+.role {
+    color: #FFF;
+    font-weight: bold;
+    width: 20px;
+    height: 24px;
+    padding: 0px;
+    padding-left: 4px;
+    background-repeat: no-repeat;
+    background-position: 0px center;
+    text-align: left !important;
+}
+
+.role_0 .role{
+    background-image: url(img/yellow_square.png);
+}
+
+.role_1 .role{
+    background-image: url(img/green_square.png);
+}
+
+.role_2 .role{
+    background-image: url(img/blue_square.png);
+}
+
+.role_3 .role{
+    background-image: url(img/red_square.png);
+}
+
+td.name{
+	width: 190px;
+}
+
+.team_name{
+	font-weight: bolder;
+}
+
+.done {
+	text-decoration: line-through;
+}
+
+#formazione{
+	width: 690px;
+	float: left;
+	margin:10px 0;
+	min-height: 300px;
+}
+
+#div-formazione {
+	border: 1px solid #ccc;
+}
+
+#pos_0{
+	width: 350px;
+	border: 0px solid #CCC;
+	float: left;
+	margin-left:10px;
+	min-height: 400px;
+}
+
+#pos_0 table{
+/*	font-size: 90%;*/
+}
+
+#pos_0 table td{
+	padding: 1px;
+}
+
+#pos_0 table tr{
+	padding: 0px;
+	margin: 0px;
+}
+
+#pos_1{
+	width: 300px;
+	border: 1px solid #CCC;
+	float: left;
+	margin:0 0 10px 10px ;
+	min-height: 250px;
+	padding-bottom: 10px;
+}
+
+#pos_1 table td{
+	padding: 1px;
+}
+
+#pos_2{
+	width: 300px;
+	border: 1px solid #CCC;
+	float: left;
+	margin-left:10px;
+	margin-top: 10px;
+	min-height: 160px;	
+	padding-bottom: 10px;
+}
+
+#pos_2 table td{
+	padding: 1px;
+}
+
+#pos_2 h4, #pos_1 h4{
+	background-color: #F3F3F3;
+    left: 10px;
+    position: relative;
+    top: -12px;
+    width: 55px;
+}
+
+#avvisi {
+	width:100%;
+}
+
+#avvisi ul li{
+	float:left;
+	margin-left: 10px;
+	width:550px;
+}
+
+#validate{
+	width: 250px;
+	float:left;
+	margin:20px 0 0 20px;
+	text-align: center;
+	height: 50px;
+}
+
+#validate ul{
+	list-style-type: none;
+}
+
+#validate ul li{
+	float:left;
+	width:auto;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+div.shirt img{
+	padding: 5px;
+	margin: 5px;
+}
+
+#teams li{
+	background: none;
+}
+
+.formazioneForm label.option {
+	float:left;
+	width: 70px;
+	padding-left: 10px;
+	margin-left:12px;
+	margin-top: -10px;
+}
+
+.formazione-confirm{
+	border: 1px solid #CCC; 
+	margin: 10px 0px; 
+	padding: 10px;
+}
+
+#calendar .team {
+	width: 370px;
+	font-weight:bold;
+	font-size: 0.9em;
+}
+
+#calendar .gol {
+	width: 30px;
+	font-weight:bold;
+}
+
+#calendar .pt {
+	width: 25px;
+}
+.round {
+	width:345px;
+	height:auto;
+	float: left;
+	position: relative;
+	display: block;
+	margin-right:10px;
+}
+
+.round tr{
+	height: 30px;
+}
+
+.round td{
+	font-size: smaller;
+}
+
+.round td.gol{
+	font-weight: bold;
+	text-align: center;
+	width: 10%;
+}
+
+.round td.pt{
+	text-align: center;
+	width: 20%;
+}
+
+.round td.team{
+	font-size: 80%;
+}
+
+#groups ul li {
+	padding:0px;
+	margin:0px;
+	list-style-type: none;
+	list-style-position: inside;
+}
+
+#round-list ul {
+	list-style-position: inside;
+	list-style-type: none;
+}
+
+li.round_list {
+	list-style-type: none;
+	float:left;
+	background: none;
+	font-size: 0.95em;
+	margin-left: 8px !important;
+}
+
+div.round_list {
+	padding-bottom: 30px;
+}
+
+th.padding {
+	padding-right: 10px;
+}
+
+.bold{
+	font-weight: bold;
+}
+
+.malus{
+	color: #C00;
+}
+
+.bonus{
+	color: #090;
+}
+
+
+.not-active td {
+	text-decoration: line-through;
+	color: #999;
+}
+
+
+.team-history li{
+    padding:0px 2px;
+    background:none;
+    vertical-align:middle;
+}
+
+.team-history li img{
+    vertical-align:middle;
+}
+
+.team-details{
+	width: 48%;
+	float:left;
+}
+
+.first-team {
+	margin-right: 10px;
+}
+
+.team-details-header{
+	font-size: 70%;
+	vertical-align:bottom;
+}
+
+.team-details-name{
+	font-size: 90%;
+	text-align: left;
+}
+
+.team-details-role{
+	font-size: 80%;
+}
+
+.team-details-empty-row, 
+.team-details-empty-row td{
+	line-height: 26px;
+	border-bottom: 1px solid transparent !important;
+	border-top: 0px;
+	background: none !important;
+	padding: 0px;
+}
+
+.team-details-lineup {
+	font-size: 0.85em;
+}
+
+.team-details-lineup table td, 
+.team-details-lineup table th{	
+	text-align:center;
+}
+
+.team-details-tot{
+	border-right: 1px dotted #CCC;
+    font-weight: bold;
+}
+
+#formazione_form input{
+	width: 70px;
+	margin-bottom: 8px;
+}
+
+#formazione_form{
+	width: 80px;
+	float:left;
+	margin:20px 0 0 20px;
+}
+
+#header-formazione{
+	display: block;
+    height: 80px;
+    margin: 0 auto;
+    max-width: 500px;
+}
+
+#formazione td.button a {
+	height:30px !important;
+	border: 1px solid #EEE !important;
+	border-radius: 6px !important;
+	color: #EEE;
+	width: 80px;
+	display: block;
+	padding: 8px;
+	cursor: pointer;
+}
+
+#formazione-mobile td.button a {
+	color: #414141;
+	display: block;
+	/*width: 120px;*/
+	cursor: pointer;
+	text-shadow: 0 0 0 #414141;
+}
+
+#formazione-mobile td.button a.tribuna {
+    background: #d00;
+}
+
+#formazione-mobile td.button a.titolare{
+    background: #33CC33;
+}
+
+#formazione-mobile td.button a.riserva1 {
+    background: #CD0;
+}
+
+#formazione-mobile td.button a.riserva2 {
+    background: #E90;
+}
+
+.legenda {
+	display:block; 
+	width: 16px; 
+	height: 16px; 
+}
+
+.legenda-titolare {
+	background-color: #33cc33;'
+}
+
+.legenda-riserva-1 {
+	background-color: #CD0;'
+}
+
+.legenda-riserva-2 {
+	background-color: #E90;'
+}
+
+.legenda-tribuna {
+	background-color: #d00;
+}
+
+
+.dark-panel {
+	position: absolute;
+	background: transparent url(img/dark_panel.png) repeat scroll;
+}
+
+.bottom-panel {
+	bottom:0;
+	height:auto;
+	left:0;
+	width:750px;
+}
+
+.home-last-stories img {
+	position: relative;
+	display: block;
+}
+.home-last-stories .dark-panel h1 {
+	font-size: 20px;
+	line-height: 24px;
+	color: #F28E00;
+	font-weight:bold;
+	padding: 10px;
+}
+
+.home-last-stories a{
+	color: #F60;
+}
+
+.home-last-stories p {
+	font-size: 14px;
+	color: #EEE;
+	padding: 0px 10px;
+	float:left;
+	width:650px;
+}
+
+.home-last-stories {
+	position: relative;
+	float:left;
+	box-shadow: -1px 3px 3px 1px #999;
+	margin: 5px;
+}
+
+h3.home-block-title {
+	background: #6AD; /*#4183AF 94CE18*/
+	color:#FFFFFF;
+	font-size:1.3em;
+	text-transform: lowercase;
+	padding:3px 0px 3px 6px;
+	text-align:left;
+	margin: 2px -4px 0px -4px;
+}
+
+li.home-wall-message {
+	background: none;
+	padding: 0px;
+}
+
+li.odd {
+	background: #EEEEEE;
+}
+
+div.home-wall-text{
+	float:left;
+	width: 270px;
+	display: block;
+}
+
+div.home-wall-picture{
+	float:left;
+	width: 60px;
+	display: block;
+}

@@ -1,0 +1,568 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for fantacalcio.
+ *
+ */
+
+function fantacalcio_schema() {
+  $schema = array();
+  $schema['fanta_competitions'] = array(
+    'description'       => t('{fanta_competitions} contiene i dati relativi alle competizioni della lega'),
+    'fields'        => array(
+      'c_id'    => array(
+        'description'   => t('Id della competizione'),
+        'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'name'     => array(
+        'description'   => t('Nome della competizione'),
+        'type'          => 'varchar',
+    'length'    => 40,
+        'not null'      => FALSE,
+      ),
+      'active'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'calendario'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'classifica'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'formazioni'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'newsletter'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+
+    ),
+    'primary key' => array('c_id'),
+  );
+  
+  $schema['fanta_groups'] = array(
+    'description'       => t('{fanta_groups} contiene i dati relativi ai gironi della lega'),
+    'fields'        => array(
+      'g_id'    => array(
+        'description'   => t('Id del girone'),
+        'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'c_id'    => array(
+        'description'   => t('Id della competizione di appartenenza'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'name'     => array(
+        'description'   => t('Nome del girone'),
+        'type'          => 'varchar',
+    'length'    => 40,
+        'not null'      => FALSE,
+      ),
+      'active'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'standing'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'matches'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'lineup'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'newsletter_standings'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'newsletter_matches'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key' => array('g_id'),
+  );
+  
+  $schema['fanta_teams'] = array(
+    'description'       => t('{league_teams} contiene i dati relativi alle squadre'),
+    'fields'        => array(
+      't_id'    => array(
+        'description'   => t('Id della squadra'),
+        'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'name'     => array(
+        'description'   => t('Nome della squadra'),
+        'type'          => 'varchar',
+    'length'    => 40,
+        'not null'      => FALSE,
+      ),
+      'active'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    'uid'     => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+
+    ),
+    'primary key' => array('t_id'),
+  );
+  
+    
+  $schema['fanta_teams_groups'] = array(
+    'description'       => t('{fanta_teams_groups} associa le diverse squadre alle varie competizioni create'),
+    'fields'        => array(
+      'tg_id'    => array(
+        'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'g_id'     => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      't_id'     => array(
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'active'     => array(
+        'type'          => 'tinyint',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('tg_id'),
+  );
+  
+  $schema['fanta_rounds'] = array(
+    'description'       => t('{league_teams_leagues} associa le diverse squadre alle varie leghe create'),
+    'fields'        => array(
+      'mid'    => array(
+        'description'   => t('Private Message ID'),
+    'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'author'     => array(
+        'description'   => t('UID of the author'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'subject'     => array(
+        'description'   => t('Subject text of the message'),
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'body'     => array(
+        'description'   => t('Body of the message'),
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'size'          => 'big',
+      ),
+      'timestamp'     => array(
+        'description'   => t('Time when the message was sent'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('mid'),
+    'indexes'         => array(
+      'author'            => array('author'),
+      'subject'           => array(array('subject', 20)),
+      'timestamp'         => array('timestamp'),
+    ),
+  );
+  
+  $schema['fanta_matches'] = array(
+    'description'       => t('{league_matches} contiene i dati relativi alle partite '),
+    'fields'        => array(
+      'mid'    => array(
+        'description'   => t('Private Message ID'),
+        'type'          => 'serial',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'author'     => array(
+        'description'   => t('UID of the author'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'subject'     => array(
+        'description'   => t('Subject text of the message'),
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'body'     => array(
+        'description'   => t('Body of the message'),
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'size'          => 'big',
+      ),
+      'timestamp'     => array(
+        'description'   => t('Time when the message was sent'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('mid'),
+    'indexes'         => array(
+      'author'            => array('author'),
+      'subject'           => array(array('subject', 20)),
+      'timestamp'         => array('timestamp'),
+    ),
+  );
+
+    
+  $schema['fanta_formazioni'] = array(
+    'description'       => t('{league_teams_leagues} associa le diverse squadre alle varie leghe create'),
+    'fields'        => array(
+      'mid'    => array(
+        'description'   => t('Private Message ID'),
+    'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'author'     => array(
+        'description'   => t('UID of the author'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'subject'     => array(
+        'description'   => t('Subject text of the message'),
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'body'     => array(
+        'description'   => t('Body of the message'),
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'size'          => 'big',
+      ),
+      'timestamp'     => array(
+        'description'   => t('Time when the message was sent'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('mid'),
+    'indexes'         => array(
+      'author'            => array('author'),
+      'subject'           => array(array('subject', 20)),
+      'timestamp'         => array('timestamp'),
+    ),
+  );
+  
+  $schema['fanta_formazioni_insert'] = array(
+    'description'       => t('{league_teams_leagues} associa le diverse squadre alle varie leghe create'),
+    'fields'        => array(
+      'mid'    => array(
+        'description'   => t('Private Message ID'),
+    'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'author'     => array(
+        'description'   => t('UID of the author'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'subject'     => array(
+        'description'   => t('Subject text of the message'),
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'body'     => array(
+        'description'   => t('Body of the message'),
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'size'          => 'big',
+      ),
+      'timestamp'     => array(
+        'description'   => t('Time when the message was sent'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('mid'),
+    'indexes'         => array(
+      'author'            => array('author'),
+      'subject'           => array(array('subject', 20)),
+      'timestamp'         => array('timestamp'),
+    ),
+  );
+  
+  $schema['fanta_multe'] = array(
+    'description'       => t('{league_teams_leagues} associa le diverse squadre alle varie leghe create'),
+    'fields'        => array(
+      'mid'    => array(
+        'description'   => t('Private Message ID'),
+    'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'author'     => array(
+        'description'   => t('UID of the author'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'subject'     => array(
+        'description'   => t('Subject text of the message'),
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'body'     => array(
+        'description'   => t('Body of the message'),
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'size'          => 'big',
+      ),
+      'timestamp'     => array(
+        'description'   => t('Time when the message was sent'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('mid'),
+    'indexes'         => array(
+      'author'            => array('author'),
+      'subject'           => array(array('subject', 20)),
+      'timestamp'         => array('timestamp'),
+    ),
+  );
+  
+  $schema['fanta_players'] = array(
+    'description'       => t('{league_teams_leagues} associa le diverse squadre alle varie leghe create'),
+    'fields'        => array(
+      'mid'    => array(
+        'description'   => t('Private Message ID'),
+    'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'author'     => array(
+        'description'   => t('UID of the author'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'subject'     => array(
+        'description'   => t('Subject text of the message'),
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'body'     => array(
+        'description'   => t('Body of the message'),
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'size'          => 'big',
+      ),
+      'timestamp'     => array(
+        'description'   => t('Time when the message was sent'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('mid'),
+    'indexes'         => array(
+      'author'            => array('author'),
+      'subject'           => array(array('subject', 20)),
+      'timestamp'         => array('timestamp'),
+    ),
+  );
+  
+  $schema['fanta_rose'] = array(
+    'description'       => t('{league_teams_leagues} associa le diverse squadre alle varie leghe create'),
+    'fields'        => array(
+      'mid'    => array(
+        'description'   => t('Private Message ID'),
+    'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'author'     => array(
+        'description'   => t('UID of the author'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'subject'     => array(
+        'description'   => t('Subject text of the message'),
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'body'     => array(
+        'description'   => t('Body of the message'),
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'size'          => 'big',
+      ),
+      'timestamp'     => array(
+        'description'   => t('Time when the message was sent'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('mid'),
+    'indexes'         => array(
+      'author'            => array('author'),
+      'subject'           => array(array('subject', 20)),
+      'timestamp'         => array('timestamp'),
+    ),
+  );
+  
+  $schema['fanta_votes'] = array(
+    'description'       => t('{league_teams_leagues} associa le diverse squadre alle varie leghe create'),
+    'fields'        => array(
+      'mid'    => array(
+        'description'   => t('Private Message ID'),
+    'type'          => 'serial',  #Auto increment 
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'author'     => array(
+        'description'   => t('UID of the author'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+      'subject'     => array(
+        'description'   => t('Subject text of the message'),
+        'type'          => 'varchar',
+        'length'        => 255,
+        'not null'      => TRUE,
+      ),
+      'body'     => array(
+        'description'   => t('Body of the message'),
+        'type'          => 'text',
+        'not null'      => TRUE,
+        'size'          => 'big',
+      ),
+      'timestamp'     => array(
+        'description'   => t('Time when the message was sent'),
+        'type'          => 'int',
+        'not null'      => TRUE,
+        'unsigned'      => TRUE,
+      ),
+    ),
+    'primary key'     => array('mid'),
+    'indexes'         => array(
+      'author'            => array('author'),
+      'subject'           => array(array('subject', 20)),
+      'timestamp'         => array('timestamp'),
+    ),
+  );
+  
+  
+  return $schema;
+}
+
+#Installa il Plug In
+function fantacalcio_install() {
+  drupal_install_schema('fantacalcio');
+  
+  //variabili di sistema
+  variable_set("fantacalcio_riserve_fisse", 0);
+  variable_set("fantacalcio_coppa_competition", "2");
+  variable_set("fantacalcio_credits", "350");
+  variable_set("fantacalcio_default_vote_1", "6");
+  variable_set("fantacalcio_default_vote_2", "5.5");
+  variable_set("fantacalcio_history_cup", "sites/all/modules/fantacalcio/img/coppa-mini.png");
+  variable_set("fantacalcio_history_winner", "sites/all/modules/fantacalcio/img/scudetto-mini.png");
+  variable_set("fantacalcio_lastyear_cup", "sites/all/modules/fantacalcio/img/coppa.png");
+  variable_set("fantacalcio_lastyear_winner", "sites/all/modules/fantacalcio/img/scudetto.png");
+  variable_set("fantacalcio_main_competition", "1");
+  variable_set("fantacalcio_modificatore_attacco", 0);
+  variable_set("fantacalcio_modificatore_centrocampo", 1);
+  variable_set("fantacalcio_modificatore_difesa", 1);
+  variable_set("fantacalcio_modificatore_portiere", 1);
+  variable_set("fantacalcio_moduli_riserve", "");
+  variable_set("fantacalcio_moduli_titolari", "");
+  variable_set("fantacalcio_newsletter_round", 1);
+  variable_set("fantacalcio_number_role_0", "3");
+  variable_set("fantacalcio_number_role_1", "8");
+  variable_set("fantacalcio_number_role_2", "8");
+  variable_set("fantacalcio_number_role_3", "6");
+  variable_set("fantacalcio_points_assist", "1");
+  variable_set("fantacalcio_points_goal", "3");
+  variable_set("fantacalcio_points_goal_in", "-1");
+  variable_set("fantacalcio_points_own_goal", "-2");
+  variable_set("fantacalcio_points_penalty", "3");
+  variable_set("fantacalcio_points_penalty_fault", "-3");
+  variable_set("fantacalcio_points_penalty_kept", "3");
+  variable_set("fantacalcio_points_red_card", "-1");
+  variable_set("fantacalcio_points_yellow_card", "-0.5");
+  variable_set("fantacalcio_riserve_fisse", 1);
+  variable_set("fantacalcio_scarto", 0);
+  variable_set("fantacalcio_scarto_punti", "0");
+  variable_set("fantacalcio_feed_url", "");
+  variable_set("fantacalcio_stats_img_width", 770);
+  variable_set("fantacalcio_stats_img_height", 450);
+
+  variable_set("fantacalcio_voti_login_username", "");
+  variable_set("fantacalcio_voti_login_password", "");
+  variable_set("fantacalcio_voti_login_page", "http://www.fantagazzetta.com");
+  variable_set("fantacalcio_voti_secured_page", "http://www.fantagazzetta.com/voti-fantagazzetta-serie-A");
+  variable_set("fantacalcio_lista_portieri_page", "http://www.fantagazzetta.com/quotazioni-serie-a/portieri/costodesc");
+  variable_set("fantacalcio_lista_difensori_page", "http://www.fantagazzetta.com/quotazioni-serie-a/difensori/costodesc");
+  variable_set("fantacalcio_lista_centrocampisti_page", "http://www.fantagazzetta.com/quotazioni-serie-a/centrocampisti/costodesc");
+  variable_set("fantacalcio_lista_attaccanti_page", "http://www.fantagazzetta.com/quotazioni-serie-a/attaccanti/costodesc");
+}
+
+#Disinstalla il Plug In
+function fantacalcio_uninstall() {
+  $sql = "DELETE FROM {variables} WHERE name LIKE = '%fantacalcio%'";
+  $result = db_query($sql);
+  
+  drupal_uninstall_schema('fantacalcio');
+}
