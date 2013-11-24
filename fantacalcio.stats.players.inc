@@ -1,9 +1,153 @@
 <?php
 
 /**
- * @file fantastats.topflop.inc
+ * @file fantastats.players.inc
  *
  */
+
+/**
+ricerca giocatore
+**/
+
+function statistiche_autocomplete_players($s) {
+  $players = array();
+  $round = db_result(db_query("SELECT MAX(round) FROM {fanta_players_teams}"));
+  $sql = "SELECT p.pl_id, p.name, r.long_name as team 
+      FROM {fanta_players} p, {fanta_players_teams} t, {fanta_real_teams} r
+      WHERE t.pl_id = p.pl_id
+      AND r.rt_id = t.rt_id
+      AND t.round = '%d'
+      AND LOWER(p.name) LIKE LOWER('%s%%')
+      ORDER BY p.name";
+  $result = db_query_range($sql, $round, $s, 0, 10);
+  while ($row = db_fetch_array($result)) {
+    $id = $row['pl_id'] . ", " . $row['name'] . " (" . ucwords($row['team']) . ")";
+    $players[$id] = $id;
+  }
+  print drupal_to_js($players);
+  exit();
+}
+
+function dettagli_giocatore($pl_id = '') {
+
+  $out = drupal_get_form("choose_pl_id_form");
+
+  if (!empty($pl_id)) {
+    if (player_exists($pl_id))
+      $out .= scheda_giocatore($pl_id);
+    else $out .= "Nessun giocatore con questo id";
+  }
+
+  return $out;
+}
+
+
+function scheda_giocatore($pl_id) {
+
+  $teams_groups = get_teams_groups();ksort($teams_groups);
+  $groups = get_groups();
+  $player = get_player_by_id($pl_id);
+  $roles = array("Portiere", "Difensore", "Centrocampista", "Attaccante");
+
+  $out = "<br><h2>" . $player->name . "</h2><br>";
+  $out .= "<h3>" . $roles[$player->role] . "</h3><br>";
+  $out .= "<h4>" . ucwords($player->long_name) . "</h4><br>";
+
+  $out .= "<div class=clear>" . get_player_fantateams($player->pl_id, $groups, $teams_groups) . "</div><br/>";
+
+  $out .= player_stats($pl_id);
+
+  return $out;
+}
+
+function choose_pl_id_form() {
+
+  $form['players'] = array("#type" => "fieldset");
+
+  $form['players']['player'] = array(
+            "#title" => "Giocatore",
+            "#type" => "textfield",
+            "#autocomplete_path" => "statistiche/autocomplete/players"
+            );
+
+  $form['players']['submit'] = array(
+            "#type" => "submit",
+            "#value" => t("Ok"),
+            );
+
+  return $form;
+
+}
+
+function choose_pl_id_form_submit($form, $form_state) {
+
+  $player = $form_state['values']['player'];
+  $player_exploded = explode(',', $player);
+  $pl_id = $player_exploded[0];
+
+  drupal_goto("statistiche/giocatore/" . $pl_id);
+}
+
+function player_stats($pl_id) {
+
+  $votes = array(); $rounds = 0; $summary = array();
+  $sql = "SELECT v.round AS round, UPPER(r.long_name) AS team, v.*
+          FROM {fanta_votes} v
+          INNER JOIN {fanta_players_teams} t
+          ON v.pl_id = t.pl_id
+          AND v.round = t.round
+          INNER JOIN {fanta_real_teams} r
+          ON t.rt_id = r.rt_id
+          WHERE v.pl_id = '%d'
+          AND v.provider = '%d'
+          ORDER BY v.round";
+  $result = db_query($sql, $pl_id, variable_get("fantacalcio_votes_provider", 1));
+  while ($row = db_fetch_array($result)) {
+    $votes[$row['round']] = $row;
+    $votes[$row['round']]['goals_for'] = $row['goals_for'] + $row['penalty_goals'];
+    unset($votes[$row['round']]['v_id']);
+    unset($votes[$row['round']]['provider']);
+    unset($votes[$row['round']]['pl_id']);
+    unset($votes[$row['round']]['penalty_goals']);
+	unset($votes[$row['round']]['win_goals']);
+	unset($votes[$row['round']]['draw_goals']);
+    $summary['round'] = "Riepilogo";
+    $summary['team'] = "";
+    $summary['total'] += $row['total'];
+    $summary['vote'] += $row['vote'];
+    $summary['goals_for'] += $row['goals_for'] + $row['penalty_goals'];
+    $summary['goals_against'] += $row['goals_against'];
+    $summary['assists'] += $row['assists'];
+    $summary['yellow_cards'] += $row['yellow_cards'];
+    $summary['red_cards'] += $row['red_cards'];
+    $summary['saved_penalties'] += $row['saved_penalties'];
+    $summary['missed_penalties'] += $row['missed_penalties'];
+    $summary['own_goals'] += $row['own_goals'];
+
+    $rounds++;
+
+  }
+
+  if ($rounds != 0) {
+
+    $summary['vote'] = round($summary['vote'] / $rounds , 2 );
+    $summary['total'] = round($summary['total'] / $rounds , 2 );
+
+    sort($votes);
+
+    $votes[$rounds] = array("data" => $summary, "class" => "bold");
+
+    $header = array("Giornata", "Squadra", "Totale", "Voto", "Gol Fatti", "Gol Subiti", "Assist", "Amm", "Esp", "Rig Parati", "Rig Sbagliati", "Autogol");
+
+    return theme_table($header, $votes);
+  }
+  else 
+    return "Nessuna presenza";
+}
+
+/**
+ricerca avanzata
+**/
 
 function choose_players_stats($form_state) {
 

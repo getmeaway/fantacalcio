@@ -8,7 +8,8 @@ include "fantacalcio.calendar.inc";
 include "fantacalcio.standings.inc";
 include "fantacalcio.lineups.inc";
 include "fantacalcio.results.inc";
-include 'fantacalcio.stats.inc';
+include 'fantacalcio.stats.general.inc';
+include 'fantacalcio.stats.teams.inc';
 include 'fantacalcio.stats.images.inc';
 include 'fantacalcio.stats.topflop.inc';
 include 'fantacalcio.stats.players.inc';
@@ -259,6 +260,7 @@ function fantacalcio_menu() {
       'access arguments' => array('access content'),
       'type' => MENU_CALLBACK,
       );
+
   
   $items['scheda/partita']  = array(
       'title' => 'Scheda Partita',
