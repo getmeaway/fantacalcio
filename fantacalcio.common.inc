@@ -139,6 +139,19 @@ function get_group_name($g_id) {
   return db_result(db_query("SELECT name FROM {fanta_groups} WHERE g_id = '%d'", $g_id));
 }
 
+function get_groups_teams($c_id) {
+
+  $result = db_query("SELECT * FROM {fanta_groups} WHERE c_id = '%d' AND active = 1 AND lineups >= 1 ORDER BY lineups", $c_id);
+  while ($row = db_fetch_object($result)) {
+    $resulta = db_query("SELECT * FROM {fanta_teams_groups} WHERE g_id = '%d' AND active = 1", $row->g_id);
+    while ($rowa = db_fetch_object($resulta)) {
+      $groups[$row->g_id][$rowa->t_id] = $rowa->t_id;
+    }
+  }
+
+  return $groups;
+}
+
 function get_teams_groups($c_id = '') {
 
   if (empty($c_id) || !competition_exists($c_id)) $c_id = variable_get('fantacalcio_main_competition', 1);
@@ -167,6 +180,22 @@ function get_group_teams($g_id) {
   }
   return $teams;
 
+}
+
+function get_competition_group($g_id) {
+
+  $sql = "SELECT c_id FROM {fanta_groups} WHERE g_id = '%d'";
+  $result = db_query($sql, $g_id);
+  return db_result($result);
+}
+
+function get_competitions_groups() {
+  $sql = "SELECT * FROM {fanta_groups}";
+  $result = db_query($sql);
+  while ($row = db_fetch_object($result)) {
+    $groups[$row->g_id] = $row->c_id;
+  }
+  return $groups;
 }
 
 function get_teams() {
@@ -254,6 +283,18 @@ function get_rounds($c_id = "") {
   return $rounds;
 }
 
+function get_rounds_played($c_id) {
+  $sql = "SELECT competition_round FROM {fanta_rounds_competitions} c, {fanta_rounds} r
+        WHERE r.round = c.round
+        AND c.c_id = '%d' 
+        AND r.status = 1";
+  $result = db_query($sql, $c_id);
+  while ($row = db_fetch_object($result)) {
+    $rounds[$row->competition_round] = $row->competition_round; 
+  }
+  return $rounds;  
+}
+
 function get_competition_rounds($c_id = "") {
   $rounds = array();
   $sql = "SELECT * FROM {fanta_rounds_competitions} c
@@ -328,6 +369,13 @@ function get_competition_round($round, $c_id) {
     $round = $row;
   }
   return $round;
+}
+
+function get_round_label($match) {
+  $sql = "SELECT round_label FROM {fanta_rounds_competitions} WHERE competition_round = '%d' AND c_id = '%d' ";
+  $result = db_query($sql, $match->round, get_cid_by_gid($match->g_id));
+  $label = db_result($result);
+  return (empty($label)) ? $match->round . "&ordf; Giornata" : $label;
 }
 
 function get_all_rounds() {
@@ -1058,6 +1106,23 @@ function make_columns($function, $link, $array_args = array(), $filter = '', $ch
     $out .= $function($array_args);
     $out .= ($is_mobile) ? "" : "\n</div>";
   }
+  return $out;
+}
+
+function choose_competition($args = array()) {
+
+  $out = "";
+
+  $competitions = get_competitions($args);
+
+  if ($competitions) {
+    $out .= "\n<ul>";
+    foreach ($competitions as $l_id => $competition) {
+      $out .= "\n<li><a href='" . base_path() . arg(0) . "/" . $competition->name . $url_tail . "'>" . $competition->name . $show_round . "</a></li>";
+    }
+    $out .= "\n</ul>";
+  }
+
   return $out;
 }
 

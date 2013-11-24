@@ -962,6 +962,7 @@ function fantacalcio_admin_matches_calendar_submit($form, &$form_state) {
 	  $i++;
     }
   }
+  print_r($teams);
   ksort($teams);
   
   $i = 0;
@@ -971,7 +972,9 @@ function fantacalcio_admin_matches_calendar_submit($form, &$form_state) {
 	$i++;
   }
   $teams = $new_teams;
-    
+  
+  print_r($teams);
+  
   $teams_number = count($teams);
   
   if ($teams_number % 2 == 1) {
@@ -995,6 +998,7 @@ function fantacalcio_admin_matches_calendar_submit($form, &$form_state) {
     {
       /* stampa le partite di questa giornata */
 	  $round = $k * $rounds + $i + 1;
+      echo '<BR>' . $round . 'a Giornata<BR>';
  
 	  ////////////////////////////////////
       /* alterna le partite in casa e fuori */
@@ -1004,7 +1008,7 @@ function fantacalcio_admin_matches_calendar_submit($form, &$form_state) {
         {
           for ($j = 0; $j < $teams_number /2 ; $j++)
           {
-
+            echo ' '.$away[$j].' - '.$home[$j].'<BR>';
             //query insert
             $sql = "INSERT INTO {fanta_matches} (g_id, round, t1_id, t2_id, bonus_t1, bonus_t2) VALUES ('%d', '%d', '%d', '%d', '%f', '%f')";
             $result = db_query($sql, $g_id, $round, $away[$j], $home[$j], $form_state['values']['bonus_t1'], $form_state['values']['bonus_t2']);
@@ -1014,6 +1018,7 @@ function fantacalcio_admin_matches_calendar_submit($form, &$form_state) {
         {
           for ($j = 0; $j < $teams_number /2 ; $j++) 
           {
+            echo ' '.$home[$j].' - '.$away[$j].'<BR>';
             //query insert
             $sql = "INSERT INTO {fanta_matches} (g_id, round, t1_id, t2_id, bonus_t1, bonus_t2) VALUES ('%d', '%d', '%d', '%d', '%f', '%f')";
             $result = db_query($sql, $g_id, $round, $home[$j], $away[$j], $form_state['values']['bonus_t1'], $form_state['values']['bonus_t2']);
@@ -1025,6 +1030,7 @@ function fantacalcio_admin_matches_calendar_submit($form, &$form_state) {
 
         for ($j = 0; $j < $teams_number /2 ; $j++)
         {
+          echo ' '.$home[$j].' - '.$away[$j].'<BR>';
           //query insert
           $sql = "INSERT INTO {fanta_matches} (g_id, round, t1_id, t2_id, bonus_t1, bonus_t2) VALUES ('%d', '%d', '%d', '%d', '%f', '%f')";
           $result = db_query($sql, $g_id, $round, $home[$j], $away[$j], $form_state['values']['bonus_t1'], $form_state['values']['bonus_t2']);
@@ -1872,7 +1878,7 @@ function fantacalcio_admin_rounds_list() {
   
   $rounds = get_all_rounds();
   $round_statuses = get_round_statuses();
-
+#print_r($rounds[1]->competitions);
   $competitions = get_competitions();
   if ($rounds) {
     $header = array("Giornata", "Data", "Data chiusura", "Stato", "Competizione", "Giornata competizione", "Label", "Passaggio turno");

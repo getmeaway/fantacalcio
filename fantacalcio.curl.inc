@@ -143,7 +143,7 @@ function get_data_by_curl($url) {
   $username = variable_get("fantacalcio_voti_login_username", "");        // the value to submit for the username
   $password = variable_get("fantacalcio_voti_login_password", "");        // the value to submit for the password
   $login_value = 'Login';             // the text value of the login button itself
-
+//echo $username."...".$password."...";
   $cookie = "./tmp/cookie.txt";
 
   // regular expressions to parse out the special ASP.NET
@@ -194,7 +194,9 @@ function get_data_by_curl($url) {
           .'&'.$textbox_password.'='.$password
           .'&'.$button_login.'='.$login_value
           ;
-
+		  
+	//	 echo $post_data;die();
+  
   curl_setopt($ch, CURLOPT_USERAGENT, $_SERVER["HTTP_USER_AGENT"]);
   curl_setOpt($ch, CURLOPT_POST, TRUE);
   curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
@@ -258,6 +260,8 @@ function curl_exec_follow($ch, $maxredirect = null) {
 			preg_match('/Location:(.*?)\n/', $header, $matches);
             $newurl = trim(array_pop($matches));
 			
+			print_r($new_url); print "<br>"; print $original_url; die();
+            
             // if no scheme is present then the new url is a
             // relative path and thus needs some extra care
             if(!preg_match("/^https?:/i", $newurl)){
@@ -298,7 +302,7 @@ function regex_extract($text, $regex, $regs, $index)
 }
 
 function clean_votes($votes, $keys) {
-  $results = array();
+  $results = array();//print_r($votes);
   $index = 0;
   foreach($keys as $key) {
     $span = split("<span>", $votes[$index]);

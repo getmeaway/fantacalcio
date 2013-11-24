@@ -250,3 +250,119 @@ function get_player_fantateams($pl_id, $groups, $teams_groups) {
     
   return theme_item_list($items);
 }
+
+/**
+giocatori liberi
+**/
+
+function fantacalcio_giocatori_liberi($g_id = "") {
+
+  $js = "$(function(){
+      $('#roles_" . $g_id . "').tabs({fxFade:true});
+      });
+      ";
+  drupal_add_js($js, 'inline', 'footer');
+
+  $sql = "SELECT * FROM {fanta_groups} WHERE c_id = '%d'";
+  $result = db_query($sql, variable_get('fantacalcio_main_competition', 1));
+  while ($row = db_fetch_array($result)) {
+    $groups[$row['g_id']] = $row['name'];
+  }
+
+  $out = choose_group($groups, $g_id);
+
+  if (!empty($g_id) && group_exists($g_id)) {
+
+    $out .= "<h3>" . $groups[$g_id] . "</h3>";
+
+    $players = get_players();
+
+    $nonfree_players = array(); $roles = array();
+    $sql = "SELECT pl_id FROM {fanta_squads} WHERE t_id IN " .
+        "(SELECT t_id FROM {fanta_teams_groups} WHERE g_id = '%d') " .
+        "AND in_team = 1";
+    $result = db_query($sql, $g_id);
+    while ($row = db_fetch_array($result)) {
+      $nonfree_players[] = $row['pl_id'];
+    }
+    
+    #tab per ogni ruolo
+    $roles = array(0 => 0, 1 => 1, 2 => 2, 3 => 3);
+
+    $out .= "\n<div id='roles_" . $g_id ."' class='tabs' data-role=navbar>" .
+        "\n<ul>";
+    foreach ($roles as $role_id => $role) {
+      $role_format = (is_mobile()) ? "short" : "long";
+      $width = (is_mobile()) ? "width: 0px;" : "";
+      $out .= "\n<li style='background:none; $width'><a href='#r_" . $role_id . "'><span>" . convert_role($role, $role_format) . "</span></a></li>";
+    }
+    $out .= "\n</ul>";
+
+    foreach ($roles as $role_id => $role) {
+      $out .= "\n<div id='r_" . $role_id . "'>"
+          . get_free_players($role_id, $g_id, $players, $nonfree_players)
+          . "\n</div>";
+    }
+
+    $out .= "\n</div>";
+
+  }
+
+  return $out;
+}
+
+
+function choose_group($groups, $g_id = '') {
+  return drupal_get_form("choose_group_form", $groups, $g_id);
+}
+
+function choose_group_form(&$form_state, $groups, $g_id) {
+  $form['groups'] = array("#type" => "fieldset");
+
+  $form['groups']['groups'] = array(
+                  "#type" => "select",
+                  "#title" => "Scegli un girone",
+                  "#options" => $groups,
+                  "#default_value" => $g_id,
+                    );
+
+  $form['groups']['submit'] = array(
+                  "#value" => "Ok",
+                  "#type" => "submit",
+                  );
+  return $form;
+}
+
+function choose_group_form_submit($form, $form_state) {
+  $g_id = $form_state['values']['groups'];
+  drupal_goto("giocatori/liberi/" . $g_id);
+}
+
+function get_free_players($role, $g_id, $players, $nonfree_players) {
+
+  $header = array("Ruolo", "Nome", "Squadra", "");
+
+  $rows = array();
+  
+  foreach ($players as $pl_id => $player) {
+    $names[$pl_id] = $player->name;
+    $teams[$pl_id] = $player->team;
+  }
+  
+  array_multisort($names, SORT_ASC, $teams, SORT_ASC, $players);
+
+  foreach ($players as $pl_id => $player) {
+    if (!in_array($player->pl_id, $nonfree_players) && $player->role == $role) {
+      $link_pl_id = "<a rel='lightframe[" . $role . "]' href='" . base_path() . "scheda/giocatore/" . $player->pl_id . "' title='Dettagli giocatore'>" .
+            "<img src='" . base_path() . drupal_get_path("module", "fantacalcio") . "/images/stats.png'>";
+      $class = ($player->active) ? "active" : "not-active" ;
+      $rows[$pl_id] = array("data" => array(convert_role($player->role), $player->name, ucwords(convert_teams($player->team)), $link_pl_id), 
+  "class" => $class);
+    }
+  }
+
+  $out .= theme_table($header, $rows);
+
+  return $out;
+}
+

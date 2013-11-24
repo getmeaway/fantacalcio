@@ -1,12 +1,13 @@
 <?php
 
 #Includes
-include "fantacalcio.inc";
 include "fantacalcio.common.inc";
 include "fantacalcio.admin.inc";
-include "fantacalcio.team.inc";
-include "fantacalcio.formazioni.inc";
-include "fantacalcio.risultati.inc";
+include "fantacalcio.teams.inc";
+include "fantacalcio.calendar.inc";
+include "fantacalcio.standings.inc";
+include "fantacalcio.lineups.inc";
+include "fantacalcio.results.inc";
 include 'fantacalcio.stats.inc';
 include 'fantacalcio.stats.images.inc';
 include 'fantacalcio.stats.topflop.inc';
@@ -17,9 +18,6 @@ include "fantacalcio.curl.inc";
 
 #Css file
 drupal_add_css('sites/all/modules/fantacalcio/css/style.css', 'themes', 'all', TRUE);
-
-drupal_add_css('sites/all/plugins/tablesorter/css/theme.blue.css', 'themes', 'all', TRUE);
-drupal_add_js('sites/all/plugins/tablesorter/js/jquery.tablesorter.js', 'footer');
 
 #init
 function fantacalcio_init() {
@@ -206,14 +204,6 @@ function fantacalcio_menu() {
       'type' => MENU_NORMAL_ITEM,
       );
 
-  $items['calcola/%/%'] = array(
-      'title' => 'Risultati',
-      'page callback' => 'fantacalcio_risultati_automatici',
-      'page arguments' => array(1, 2),
-      'access arguments' => array('calcola risultati'),
-      'type' => MENU_NORMAL_ITEM,
-      );
-
   $items['squadre'] = array(
       'title' => 'Squadre',
       'page callback' => 'fantacalcio_show_teams',
@@ -264,6 +254,7 @@ function fantacalcio_menu() {
   $items['calendario/partita/%']  = array(
       'title' => 'Scheda Partita',
       'page callback' => 'show_match_details',
+
       'page arguments' => array(2),
       'access arguments' => array('access content'),
       'type' => MENU_CALLBACK,
@@ -680,7 +671,7 @@ function fantacalcio_block($op = 'list', $delta = 0) {
 function fantacalcio_cron() {
   include "fantacalcio.cron.inc";
   fantacalcio_send_formazioni_email();
-  fantacalcio_risultati_automatici_check();
+  //fantacalcio_results();
 }
 
 #theme functions
