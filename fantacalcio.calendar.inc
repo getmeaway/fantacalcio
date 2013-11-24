@@ -62,14 +62,14 @@ function get_matches_table($g_id) {
 
   $num_rounds = get_number_rounds($g_id);
 
-  if ($num_rounds > 1) {
-    //elenco giornate
+  //elenco giornate
+  if ($num_rounds > 1)
     $out .= "<div style='clear:both;'></div>" . (!is_mobile() ? get_round_list($g_id) : "");
 
-    //calendario completo
-    $matches = get_matches($g_id);
-    $out .= show_matches($matches, $g_id);
-  }
+  //calendario completo
+  $matches = get_matches($g_id);
+  $out .= show_matches($matches, $g_id);
+
   return $out;
 }
 
