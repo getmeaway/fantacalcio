@@ -5,22 +5,6 @@
  *
  */
 
-function dettagli_squadra($t_id = '') {
-
-  $teams = array();
-  $sql = "SELECT * FROM {fanta_teams} WHERE active = 1 ORDER BY name";
-  $result = db_query($sql);
-  while ($row = db_fetch_object($result)) {
-    $teams[$row->t_id] = $row->name;
-  }
-
-  if (!empty($t_id) && team_exists($t_id)) {
-    $out .= scheda_squadra($team);
-  }
-
-  return $out;
-}
-
 function scheda_squadra($team) {
 
   $out = "<br><h2>" . $team->name . "</h2><br>";
@@ -116,12 +100,6 @@ function choose_t_id_form_submit($form, $form_state) {
   $t_id = $form_state['values']['t_id'];
 
   drupal_goto("statistiche/squadra/" . $t_id);
-}
-
-function get_dettagli_squadra($t_id = '') {
-  $args = array("t_id" => $t_id);
-  $out .= make_columns('dettagli_squadra', 'statistiche/squadra', $args);
-  return $out;
 }
 
 function get_team_position($t_id) {

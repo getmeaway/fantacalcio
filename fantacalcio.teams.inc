@@ -212,7 +212,7 @@ function fantacalcio_get_title_team() {
 }
 
 /****************/
-/* rose      */
+/* squadre      */
 /****************/
 
 function fantacalcio_show_teams($t_id = '') {
@@ -349,9 +349,21 @@ function show_rosa($t_id) {
   return $out;
 }
 
-/****************/
-/* END rose    */
-/****************/
+function dettagli_squadra($t_id = '') {
+
+  $teams = array();
+  $sql = "SELECT * FROM {fanta_teams} WHERE active = 1 ORDER BY name";
+  $result = db_query($sql);
+  while ($row = db_fetch_object($result)) {
+    $teams[$row->t_id] = $row->name;
+  }
+
+  if (!empty($t_id) && team_exists($t_id)) {
+    $out .= scheda_squadra($team);
+  }
+
+  return $out;
+}
 
 function fantacalcio_show_teams_() {
 
