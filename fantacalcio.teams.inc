@@ -352,28 +352,21 @@ function show_rosa($t_id) {
 function dettagli_squadra($t_id = '') {
 
   $teams = array();
-  $sql = "SELECT * FROM {fanta_teams} WHERE active = 1 ORDER BY name";
-  $result = db_query($sql);
+  $sql = "SELECT * FROM {fanta_teams} WHERE active = 1 AND t_id = '%d'";
+  $result = db_query($sql, $t_id);
   while ($row = db_fetch_object($result)) {
-    $teams[$row->t_id] = $row->name;
+    $team = $row;
   }
 
   if (!empty($t_id) && team_exists($t_id)) {
-    $out .= scheda_squadra($team);
+    $rows[] = array("<h4>" . t("Allenatore") . "</h4>", $team->coach);
+    $rows[] = array("<h4>" . t("Stadio") . "</h4>", $team->stadium);
+    $rows[] = array("<h4>" . t("Trofei") . "</h4>", theme_team_history($team->history));
+
+    $out = theme_table(array(), $rows);
   }
 
   return $out;
-}
-
-function scheda_squadra($team) {
-
-  $out = "<br><h2>" . $team->name . "</h2><br>";
-  $out .= "<p><img src='" . base_path() . drupal_get_path("module", "fantacalcio") . "/images/shirts/" . $team->shirt . "'></p>";
-  $rows[] = array("<h4>" . t("Allenatore") . "</h4>", $team->coach);
-  $rows[] = array("<h4>" . t("Stadio") . "</h4>", $team->stadium);
-  $rows[] = array("<h4>" . t("Trofei") . "</h4>", theme_team_history($team->history));
-
-  return theme_table(array(), $rows);
 }
 
 function fantacalcio_show_teams_() {
