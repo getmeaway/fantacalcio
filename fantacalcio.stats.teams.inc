@@ -5,17 +5,6 @@
  *
  */
 
-function scheda_squadra($team) {
-
-  $out = "<br><h2>" . $team->name . "</h2><br>";
-  $out .= "<p><img src='" . base_path() . drupal_get_path("module", "fantacalcio") . "/images/shirts/" . $team->shirt . "'></p>";
-  $rows[] = array("<h4>" . t("Allenatore") . "</h4>", $team->coach);
-  $rows[] = array("<h4>" . t("Stadio") . "</h4>", $team->stadium);
-  $rows[] = array("<h4>" . t("Trofei") . "</h4>", theme_team_history($team->history));
-
-  return theme_table(array(), $rows);
-}
-
 function team_stats($t_id) {
 
   #pt max, pt min, pt medio, gol medio, pt, vinte, perse , pareggiate, striscia pos, striscia neg,
