@@ -21,8 +21,10 @@ function _fantacalcio_classifica($c_name = '') {
 function get_standing_table($g_id) {
 
   #jquery tablesorter
-  drupal_add_css('sites/all/plugins/tablesorter/css/theme.blue.css', 'themes', 'all', TRUE);
-  drupal_add_js('sites/all/plugins/tablesorter/js/jquery.tablesorter.js', 'footer');
+  if (!is_mobile()) {
+    drupal_add_css('sites/all/plugins/tablesorter/css/theme.blue.css', 'themes', 'all', TRUE);
+    drupal_add_js('sites/all/plugins/tablesorter/js/jquery.tablesorter.js', 'footer');
+  }
 
   global $user;
 
@@ -50,11 +52,12 @@ function get_standing_table($g_id) {
 
   array_multisort($pts, SORT_DESC, $gol_f, SORT_DESC, $pts_f, SORT_DESC, $teams);
 
-  $js = "$(function() {
-  $('#classifica_" . $g_id . "').tablesorter({sortList: [[2,1],[6,1],[9,1]], widgets: ['zebra'], headers: { 0:{sorter: false}, 1:{sorter: false}}});
-});  ";
-
-  drupal_add_js($js, 'inline', 'footer');
+  if (!is_mobile()) {
+    $js = "$(function() {
+    $('#classifica_" . $g_id . "').tablesorter({sortList: [[2,1],[6,1],[9,1]], widgets: ['zebra'], headers: { 0:{sorter: false}, 1:{sorter: false}}});
+  });  ";
+    drupal_add_js($js, 'inline', 'footer');
+  }
 
   $out .= "\n<table id='classifica_" . $g_id . "' name='classifica_" . $g_id . "' class='tablesorter tablesorter-blue classifica' data-role=table data-mode=columntoggle data-column-btn-text='Espandi...' data-column-btn-theme=d>" .
       "\n<thead>".

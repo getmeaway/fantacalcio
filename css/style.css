@@ -313,6 +313,7 @@ th.padding {
 .team-details{
 	width: 48%;
 	float:left;
+	min-width: 250px;
 }
 
 .first-team {

@@ -603,7 +603,7 @@ function show_team_details_played($t_id, $competition_round, $c_id, $m_id, $empt
       if ($riserva['has_played'] == 1) {
         $data[] = get_amm_esp($votes[$pl_id]->yellow_cards, $votes[$pl_id]->red_cards);
         $data[] = array("data" => $votes[$pl_id]->total, "class" => get_details_class($votes[$pl_id]->tot) . " team-details-tot");
-        $data[] = array("data" => $votes[$pl_id]->vote, "class" => get_details_class($votes[$pl_id]->vote));
+        $data[] = array("data" => $votes[$pl_id]->vote);
         $data[] = array("data" => ($votes[$pl_id]->goals_for + $votes[$pl_id]->penalty_goals > 0 ?($votes[$pl_id]->goals_for + $votes[$pl_id]->penalty_goals) . (($votes[$pl_id]->penalty_goals > 0) ? "(" . $votes[$pl_id]->penalty_goals . ")" : "") : "-"), 
                   "class" => get_details_class(($votes[$pl_id]->goals_for + $votes[$pl_id]->penalty_goals), "bonus"));
 
