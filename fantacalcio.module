@@ -129,7 +129,7 @@ function fantacalcio_menu() {
   $items['formazioni/multe']  = array(
       'title' => 'Multe',
       'page callback' => 'fantacalcio_show_multe',
-      'access arguments' => array('access fantacalcio'),
+      'access arguments' => array('access team'),
       'type' => MENU_CALLBACK,
       );
 
