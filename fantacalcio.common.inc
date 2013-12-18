@@ -203,7 +203,7 @@ function get_teams() {
       ON t.t_id = g.t_id
       WHERE t.active = 1";
   $sql = "SELECT * FROM {fanta_teams} 
-      WHERE active = 1";
+      WHERE active = 1 ORDER BY name";
   $result = db_query($sql);
   while ($row = db_fetch_object($result)) {
     $t_id = $row->t_id;
