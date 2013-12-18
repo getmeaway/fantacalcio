@@ -1145,88 +1145,41 @@ function fantacalcio_show_multe() {
   $out = '';
   $multe = array();
 
-  $sql = "SELECT * FROM {fanta_rounds_competitions}";
-  $result = db_query($sql);
-  while ($row = db_fetch_object($result)) {
-    $vote_rounds[$row->c_id][$row->competition_round] = $row->round;
-  }
+  $teams = get_teams();
 
-  $sql = "SELECT * FROM {fanta_lineups_inserts} WHERE status = 0";
-  $result = db_query($sql);
-  while ($row = db_fetch_object($result)) {
-    $t_id = $row->t_id;
-    $competition_round = $row->round;
-    $c_id = $row->c_id;
+  foreach($teams as $t_id => $team) {
 
-    $round = $vote_rounds[$c_id][$competition_round];
-
-    $multe[$t_id][$round] += ($row->status == 0) ? 1 : 0;
-  }
-
-  $num_multe = array(); $tot_multe = array();
-
-  if ($multe) {
-
-    $header[] = "Squadra";
-    $header[] = "Giornate";
-
-    $teams = get_teams();
-
-    foreach ($teams as $t_id => $team) {
-      $key = ucwords($team->name);
+    $sql = "SELECT * FROM {fanta_payments} WHERE t_id = '%d'";
+    $result = db_query($sql, $t_id);
+    while($row = db_fetch_object($result)) {
+      $quota = $row->initial_quota;
+      $payed = $row->payed;
+      $win_quota = $row->win_quota;
+      $lost_quota = $row->lost_quota;
+      $quota_fine = ($row->initial_quota_fine == 1 ? variable_get("fantacalcio_quota_fine", 5) : 0);
     }
 
-    $tot_multe = 0;
-
-    foreach ($multe as $t_id => $multe_team) {
-
-      $key = ucwords($teams[$t_id]->name);
-      $rows[$key][] = $key;
-
-      $multe_rounds = "";
-
-      foreach ($multe_team as $round => $multa) {
-        
-        if ($multa != 0) {
-          $num_multe[$t_id]++;
-          $multe_rounds .= $round . ", ";
-        }
-        
-        $last_user_round = $round;
-      }
-
-      $rows[$key][] = substr($multe_rounds, 0, -2);
-
-      $tot_multa[$t_id] = ($num_multe[$t_id]);
-
+    $lineups_fine = 0;
+    $lineups_rounds = array();
+    $sql = "SELECT * FROM {fanta_lineups_inserts} WHERE status = 0 AND c_id = '%d' AND t_id = '%d'";
+    $result = db_query($sql, variable_get("fantacalcio_main_competition", 1), $t_id);
+    while ($row = db_fetch_object($result)) {
+      $lineups_fine++;
+      array_push($lineups_rounds, $row->round);
     }
+    $lineups_fine = $lineups_fine * ceil($lineups_fine / 2);
+    $lineups_rounds = ($lineups_fine > 0 ? " (" . implode(",", $lineups_rounds) . ")" : "");
+
+    $payoff = -$quota + $payed - $lost_quota - $quota_fine - $lineups_fine + $win_quota;
+
+    $rows[$t_id] = array("data" => array($team->name, $quota, $payed, $win_quota, $lost_quota, $quota_fine, $lineups_fine . $lineups_rounds, $payoff));
     
-    foreach ($tot_multa as $t_id => $multa) {
-      $key = ucwords($teams[$t_id]->name);
-      $multa_team = fantacalcio_calcola_multe($multa);
-      $rows[$key][] = $multa_team . " &euro;";
-      $tot_multe += $multa_team;
-    }
-
-    $header[] = "Totale";
-
-    ksort($rows);
-
-    $rows['totale'] = array(
-              array(
-                "data" => "Totale",
-                "colspan" => 2,
-                "style" => "font-weight: bold;"
-                ),
-              array(
-                "data" => $tot_multe . " &euro;",
-                "style" => "font-weight: bold;"
-                )
-              );
-
-    return theme_table($header, $rows);
   }
-  else return "Nessuna multa";
+
+  $header = array("Squadra", "Quota", "Pagato", "Vincita", "Perdita", "Multa quota", "Multe", "Saldo");
+
+  return theme_table($header, $rows);
+
 }
 
 function fantacalcio_calcola_multe($num_multe) {
