@@ -13,7 +13,6 @@ function fantacalcio_send_formazioni_email() {
   }
 
   if ( ($date - time() ) < 3600 * 24) {
-      watchdog("fantacalcio", "Promemoria" . variable_get("fantacalcio_newsletter_round", $round));
     if (variable_get("fantacalcio_newsletter_round", $round) <= $round) {
       fantacalcio_send_formazioni_newsletter($date, $round + 1);
       fantacalcio_crea_formazioni_news($round + 1);

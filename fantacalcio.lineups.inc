@@ -412,6 +412,8 @@ function fantacalcio_formazione_form($form_state, $args) {
 }
 
 function fantacalcio_formazione_form_submit($form, & $form_state) {
+  global $user;
+
   $t_id = $form_state['values']['t_id'];
   $c_id = $form_state['values']['c_id'];
   $round = $form_state['values']['round'];
@@ -431,7 +433,7 @@ function fantacalcio_formazione_form_submit($form, & $form_state) {
       //insert
       if ($player->position > 0) {
         $sql = "INSERT INTO {fanta_lineups} (t_id, pl_id, c_id, round, position, timestamp, uid) VALUES ('%d', '%d', '%d', '%d', '%d', '%d', '%d')";
-        db_query($sql, $t_id, $pl_id, $c_id, $round, $player->position, $timestamp, $user->uid);
+        db_query($sql, $t_id, $pl_id, $c_id, $round, $player->position, time(), $user->uid);
       }
     }
 
@@ -1147,6 +1149,7 @@ function fantacalcio_show_multe() {
 
   $teams = get_teams();
 
+  $fines_sum = 0;
   foreach($teams as $t_id => $team) {
 
     $sql = "SELECT * FROM {fanta_payments} WHERE t_id = '%d'";
@@ -1167,19 +1170,44 @@ function fantacalcio_show_multe() {
       $lineups_fine++;
       array_push($lineups_rounds, $row->round);
     }
-    $lineups_fine = $lineups_fine * ceil($lineups_fine / 2);
-    $lineups_rounds = ($lineups_fine > 0 ? " (" . implode(",", $lineups_rounds) . ")" : "");
+    $lineups_fine = $lineups_fine * ($lineups_fine + 1) / 2;
+    $lineups_rounds = ($lineups_fine > 0 ? implode(",", $lineups_rounds) : "");
 
     $payoff = -$quota + $payed - $lost_quota - $quota_fine - $lineups_fine + $win_quota;
+	
+	$payoff_class = ($payoff > 0 ? "ok" : ($payoff < 0 ? "error" : ""));
 
-    $rows[$t_id] = array("data" => array($team->name, $quota, $payed, $win_quota, $lost_quota, $quota_fine, $lineups_fine . $lineups_rounds, $payoff));
+    $rows[$t_id] = array(
+	    array("data" => $team->name, "class" => "text-left"), 
+	    array("data" => $quota . " &euro;", "class" => "text-right"), 
+	    array("data" => $payed . " &euro;", "class" => "text-right"), 
+	    array("data" => $win_quota . " &euro;", "class" => "text-right"), 
+	    array("data" => $lost_quota . " &euro;", "class" => "text-right"), 
+	    array("data" => $quota_fine . " &euro;", "class" => "text-right"), 
+	    array("data" => $lineups_fine . " &euro;", "class" => "text-right"), 
+	    array("data" => $lineups_rounds, "class" => "text-right"), 
+	    array("data" => $payoff . " &euro;", "class" => "text-right bold " . $payoff_class)
+	  );
     
+	$fines_sum += $lineups_fine + $quota_fine;
   }
 
-  $header = array("Squadra", "Quota", "Pagato", "Vincita", "Perdita", "Multa quota", "Multe", "Saldo");
+  $header = array(
+        array("data" => "Squadra", "class" => "text-left"), 
+	    array("data" => "Quota", "class" => "text-right"), 
+	    array("data" => "Pagato", "class" => "text-right"), 
+	    array("data" => "Vincita", "class" => "text-right"), 
+	    array("data" => "Perdita", "class" => "text-right"), 
+	    array("data" => "Multe quota", "class" => "text-right"), 
+	    array("data" => "Multe", "class" => "text-right"), 
+	    array("data" => "Giornate", "class" => "text-right"), 
+	    array("data" => "Saldo", "class" => "text-right"));
 
-  return theme_table($header, $rows);
+  $out = theme_table($header, $rows, array("class" => "text-right"));
 
+  $out .= theme_table(array(), array( array(array("data" => "Totale multe", "class" => "bold"), array("data" => $fines_sum . " &euro;", "class" => "bold"))));
+  
+  return $out;
 }
 
 function fantacalcio_calcola_multe($num_multe) {

@@ -673,7 +673,7 @@ function fantacalcio_block($op = 'list', $delta = 0) {
 function fantacalcio_cron() {
   include "fantacalcio.cron.inc";
   fantacalcio_send_formazioni_email();
-  //fantacalcio_results();
+  fantacalcio_results();
 }
 
 #theme functions
