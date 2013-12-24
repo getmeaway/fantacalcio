@@ -68,7 +68,7 @@ function get_all_rounds_played() {
   $sql = "SELECT c.competition_round AS round FROM {fanta_rounds} r 
         INNER JOIN {fanta_rounds_competitions} c
         ON c.round = r.round
-        WHERE r.status = 1";
+        WHERE r.status = 1 ORDER BY competition_round";
   $result = db_query($sql);
   while ($row = db_fetch_object($result)) {
     $rounds[$row->round] = $row->round; 
@@ -276,6 +276,7 @@ function get_rounds($c_id = "") {
       LEFT JOIN {fanta_rounds_competitions} c 
       ON r.round = c.round ";
   $sql .= (!empty($c_id)) ? "WHERE c_id = $c_id" : "";
+  $sql .= " ORDER BY r.round";
   $result = db_query($sql);
   while ($row = db_fetch_object($result)) {
     $rounds[$row->rc_id] = $row;
@@ -287,7 +288,8 @@ function get_rounds_played($c_id) {
   $sql = "SELECT competition_round FROM {fanta_rounds_competitions} c, {fanta_rounds} r
         WHERE r.round = c.round
         AND c.c_id = '%d' 
-        AND r.status = 1";
+        AND r.status = 1
+        ORDER BY r.round";
   $result = db_query($sql, $c_id);
   while ($row = db_fetch_object($result)) {
     $rounds[$row->competition_round] = $row->competition_round; 
@@ -301,6 +303,7 @@ function get_competition_rounds($c_id = "") {
       LEFT JOIN {fanta_rounds} r 
       ON r.round = c.round ";
   $sql .= (!empty($c_id)) ? "WHERE c.c_id = $c_id" : "";
+  $sql .= " ORDER BY r.round";
   $result = db_query($sql);
   while ($row = db_fetch_object($result)) {
     $rounds[$row->rc_id] = $row;
