@@ -628,6 +628,26 @@ function votes_upload_form_submit($form, &$form_state) {
   drupal_set_message(check_plain($out));
 }
 
+function fantacalcio_upload_votes_cron($round) {
+
+  $providers = get_vote_providers();
+  $votes = get_votes_html_data($round, $providers);
+
+  foreach($providers as $provider => $vote_provider) {
+    $out = insert_votes($votes[$provider], $round, $provider);
+    insert_default_votes($form_state["values"]["teams_default_1"], $round, 1, $provider);
+    insert_default_votes($form_state["values"]["teams_default_2"], $round, 2, $provider);  
+  }
+    
+  update_players($round + 1);
+  
+  //risultati provvisori
+  db_query("UPDATE {fanta_rounds} SET status = -1 WHERE round = '%d'", $round);
+  
+#  drupal_set_message('Voti caricati');
+#  drupal_set_message(check_plain($out));
+}
+
 function parse_votes_text($text, $round, $provider) {
 
   //spezzo il file in righe

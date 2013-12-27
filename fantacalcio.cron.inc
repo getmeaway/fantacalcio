@@ -23,28 +23,42 @@ function fantacalcio_send_formazioni_email() {
 }
 
 function fantacalcio_results() {
-  $round = db_result(db_query("SELECT MAX(round) FROM {fanta_rounds} WHERE status = 1")) + 1;
+  $votes_round = variable_get("fantacalcio_results_round", 0);
   $sql = "SELECT end_date FROM {fanta_rounds} WHERE round = '%d'";
-  $result = db_query($sql, $round);
+  $result = db_query($sql, $votes_round);
   while ($row = db_fetch_object($result)) {
     $date = $row->end_date;
   }
 
-  if ( $date < time() ) {
-    watchdog("fantacalcio", "Calcolo risultati avviato");
-
-    fantacalcio_upload_votes($round);
-    fantacalcio_trova_titolari($round);
-    fantacalcio_calcola_modificatori($round);
-    fantacalcio_calcola_totali($round);
-    fantacalcio_passaggio_turno($round);
-    fantacalcio_crea_news($round);
-    fantacalcio_send_newsletter($round);
-
-    watchdog("fantacalcio", "Calcolo risultati terminato");
+  if ( $date < time()) {
+    switch (variable_get("fantacalcio_results_step", 0)) {
+      case 1:
+        fantacalcio_upload_votes_cron($votes_round);
+        //controllo caricamento voti
+        $sql = "SELECT COUNT(*) FROM {fanta_votes} WHERE round = '%d' "; 
+        $result = db_result(db_query($sql, $votes_round));
+        if ($result > 0) {
+          variable_set("fantacalcio_results_step", 2);
+          watchdog("fantacalcio", "Risultati - voti caricati");
+        }
+        break;
+      case 2:
+        fantacalcio_trova_titolari($votes_round);
+        fantacalcio_calcola_modificatori($votes_round);
+        fantacalcio_calcola_totali($votes_round);
+        variable_set("fantacalcio_results_step", 3);
+        watchdog("fantacalcio", "Risultati - totali calcolati");
+        break;
+      case 3:
+        fantacalcio_passaggio_turno($votes_round);
+        fantacalcio_crea_news($votes_round);
+        fantacalcio_send_newsletter($votes_round);
+        variable_set("fantacalcio_results_step", 1);
+        variable_set("fantacalcio_results_round", $votes_round++);
+        watchdog("fantacalcio", "Risultati - News create");
+        break;
+    }
   }
-  else
-    watchdog("fantacalcio", "Calcolo risultati non avviato");
 }
 
 function fantacalcio_send_formazioni_newsletter($ts_match, $round) {

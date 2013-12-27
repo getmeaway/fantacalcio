@@ -549,6 +549,9 @@ function fantacalcio_install() {
   variable_set("fantacalcio_stats_img_width", 770);
   variable_set("fantacalcio_stats_img_height", 450);
 
+  variable_set("fantacalcio_results_step", 1);
+  variable_set("fantacalcio_results_round", 1);
+
   variable_set("fantacalcio_voti_login_username", "");
   variable_set("fantacalcio_voti_login_password", "");
   variable_set("fantacalcio_voti_login_page", "http://www.fantagazzetta.com");
