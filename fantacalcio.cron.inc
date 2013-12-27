@@ -66,7 +66,7 @@ function fantacalcio_send_formazioni_newsletter($ts_match, $round) {
   $tid = 13;
   $uid = 1; //Admin
 
-  $body = "Fantallenatore ti ricordo di " . l("inserire la formazione", "formazioni/insert") . "per la " . $round . "a Giornata entro " . date_transform($ts_match) . "."
+  $body = "Fantallenatore ti ricordo di " . l("inserire la formazione", "formazioni/insert") . " per la " . $round . "a Giornata entro " . date_transform($ts_match) . "."
     . "\nA presto.";
   $title = "Formazioni " . $round . "a Giornata";
 

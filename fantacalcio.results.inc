@@ -1984,7 +1984,10 @@ function fantacalcio_crea_news($vote_round) {
      $body .= $round . " " . $competitions[$c_id]->name . ", ";
   }
   
+  $main_c_id = variable_get("fantacalcio_main_competition", 1);
+  $main_competition = get_competition_name(variable_get("fantacalcio_main_competition", 1));
   $body = substr($body, 0, -2) . ": Pronti i risultati";
+  $body .= "<br/>" . base_path(). "calendario/" . $main_competition . "/" . $rounds[$main_c_id];
   
   $title = "Risultati " . $vote_round . "&ordf; Giornata";
 
