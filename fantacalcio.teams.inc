@@ -444,10 +444,8 @@ function theme_team_history($history) {
     $out = "";  
     $out = "<ul class='team-history'>";
     if ($data) {
-      foreach ($data as $elem) {
-        foreach ($elem as $key => $value) 
+        foreach ($data as $key => $value) 
           $out .= "<li>" . $key . " <img src='" . base_path() . drupal_get_path("module", "fantacalcio") . "/images/" . variable_get($value, "") . "'></li>";
-      }
     }
     $out .= "</ul>";
     return $out;
