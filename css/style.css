@@ -184,9 +184,20 @@ td.name{
 	padding-right: 10px;
 }
 
+div.shirt{
+	float: left;
+}
+
 div.shirt img{
 	padding: 5px;
 	margin: 5px;
+}
+
+.last-year {
+    vertical-align: bottom;
+    position: relative;
+    left: -40px;
+    top: 40px;
 }
 
 #teams li{

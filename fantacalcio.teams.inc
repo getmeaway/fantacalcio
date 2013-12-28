@@ -245,7 +245,7 @@ function show_team($args) {
         });
         });";
 
-    drupal_add_js( (is_mobile() ? $js_mobile : $js_web), 'inline', "footer");
+  drupal_add_js( (is_mobile() ? $js_mobile : $js_web), 'inline', "footer");
 
   $tabs = array(
                 array("name" => "Rosa", "function_name" => "show_rosa"),
@@ -258,7 +258,11 @@ function show_team($args) {
 
   $out = "<h3>" . $teams[$t_id]->name . "</h3><br>";
 
-  $out .= "<div class='shirt'><img src='" . base_path() . drupal_get_path("module", "fantacalcio") . "/images/shirts/" . $teams[$t_id]->shirt . "'></div>";
+  $out .= "<div><div class='shirt'><img src='" . base_path() . drupal_get_path("module", "fantacalcio") . "/images/shirts/" . $teams[$t_id]->shirt . "'></div>";
+
+  $out .= "<div class='last-year'>" . theme_team_last_year($teams[$t_id]->last_year) . "</div></div>";
+
+  $out .= "<div class='clear'></div>";
 
   $out .= "\n<div class='tabs' id='tabs' data-role=navbar>" .
       "\n<ul>";
