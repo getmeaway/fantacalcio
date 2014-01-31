@@ -342,7 +342,7 @@ function fantacalcio_insert_formazione($competition_name, $t_id, $is_admin = FAL
   }
   else {
     fantacalcio_formazione_insert_players('old', $t_id, $c_id, $round);
-    header("location: " . base_path() . "formazioni/view/" . get_competition_name($c_id) . "/" . $round . "/" . $t_id);
+    drupal_goto(base_path() . "formazioni/view/" . get_competition_name($c_id) . "/" . $round . "/" . $t_id);
   }
   
   return $out;

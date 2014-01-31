@@ -54,7 +54,7 @@ function fantacalcio_results() {
         fantacalcio_crea_news($votes_round);
         fantacalcio_send_newsletter($votes_round);
         variable_set("fantacalcio_results_step", 1);
-        variable_set("fantacalcio_results_round", $votes_round++);
+        variable_set("fantacalcio_results_round", ($votes_round + 1));
         watchdog("fantacalcio", "Risultati - News create");
         break;
     }
