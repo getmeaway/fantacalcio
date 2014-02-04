@@ -633,7 +633,7 @@ function show_team_details_played($t_id, $competition_round, $c_id, $m_id, $empt
 
   $total = $points + $mod['por'] + $mod['dif'] + $mod['centr'] + $mod['att'] + $bonus;
   $goals = floor(($total - 60)/ 6);
-  $goals = ($goals >= 0) ? $goals : 0 ;
+  $goals = ($gol >= 0) ? $goals : 0 ;
 
   $rows = array();
   $rows[] = array("Punti", $points);
