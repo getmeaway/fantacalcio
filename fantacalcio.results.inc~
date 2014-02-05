@@ -1996,7 +1996,7 @@ function fantacalcio_crea_news($vote_round) {
   
   //rimuovi "risultati provvisori"
   db_query("UPDATE {fanta_rounds} SET status = 1 WHERE round = '%d'", $vote_round);
-  variable_set("fantacalcio_results_round", ($vote_round + 1));
+  variable_set("fantacalcio_results_round", ($votes_round + 1));
   
   return "News creata";    
 }
