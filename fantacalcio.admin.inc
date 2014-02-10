@@ -2419,10 +2419,7 @@ function insert_players($text, $round) {
     //formatto il testo in righe
     $lines = explode("\n", $text);
     
-    $sql = "DELETE FROM {fanta_players_teams} 
-        WHERE round = '%d'";
-    $result = db_query($sql, $round);
-    
+    $pl_ids = array();
     foreach ($lines as $line) {
       $line = trim($line);
       if (is_numeric(substr($line, 0, 1))) {
@@ -2435,8 +2432,13 @@ function insert_players($text, $round) {
 
         $query_line .= '(' . $player['pl_id'] . ', ' . $round . ', ' . $player['team'] . ', 1), ';
 
+        array_push($pl_ids, $player['pl_id']);
       }
     }
+
+    $sql = "DELETE FROM {fanta_players_teams} 
+        WHERE round = '%d' AND pl_id IN (" . implode(",", $pl_ids) .")";
+    $result = db_query($sql, $round);
 
     //inserisco i nuovi giocatori in fanta_players_teams
     if ($query_line) {
