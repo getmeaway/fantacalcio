@@ -261,7 +261,7 @@ div.shirt img{
 }
 
 .round td.team{
-	font-size: 80%;
+	font-size: 85%;
 }
 
 #groups ul li {

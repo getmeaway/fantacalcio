@@ -144,7 +144,7 @@ function show_formazione($args = array()) {
       $header_riserve = array(array("data" => "Riserve", "colspan" => 5));
       $rows_riserve = show_position($riserve, $players);
 
-      $out .= theme_table($header_titolari, $rows_titolari) . theme_table($header_riserve, $rows_riserve);
+      $out .= theme_table($header_titolari, $rows_titolari, array("class" => "table table-responsive")) . theme_table($header_riserve, $rows_riserve, array("class" => "table table-responsive"));
 
     } 
     else $out .= "<p>Formazione non trovata</p>";
@@ -201,7 +201,7 @@ function show_position($position, $players, $show_penalties = FALSE) {
 
 function fantacalcio_formazione_insert_start_user($competition_name = '') {
   $t_id = get_team_id_by_user($user->uid);
-  return fantacalcio_formazione_insert_start($competition_name, $t_id, FALSE);
+  return fantacalcio_formazione_insert_start($competition_name, $t_id, TRUE);
 }
 
 function fantacalcio_formazione_insert_start_admin($competition_name = '', $t_id) {
@@ -284,7 +284,7 @@ function fantacalcio_insert_formazione($competition_name, $t_id, $is_admin = FAL
   $ts_match = get_timestamp_match($c_id, $round);
 
   #formazione inserita in orario
-  if ($ts_match > time() || $is_admin == TRUE) {
+  if ($ts_match > time() || $is_admin) {
 
     $out .= "\n<h3>" . ucwords($competition_name) . "</h3>";
     $out .= "\n<h4>" . $round_label . "</h4>";
@@ -342,7 +342,7 @@ function fantacalcio_insert_formazione($competition_name, $t_id, $is_admin = FAL
   }
   else {
     fantacalcio_formazione_insert_players('old', $t_id, $c_id, $round);
-    header("location: " . base_path() . "formazioni/view/" . get_competition_name($c_id) . "/" . $round . "/" . $t_id);
+    drupal_goto(base_path() . "formazioni/view/" . get_competition_name($c_id) . "/" . $round . "/" . $t_id);
   }
   
   return $out;
@@ -417,12 +417,11 @@ function fantacalcio_formazione_form_submit($form, & $form_state) {
   $t_id = $form_state['values']['t_id'];
   $c_id = $form_state['values']['c_id'];
   $round = $form_state['values']['round'];
-  $is_admin = user_access("amministra formazioni", $user);
 
   $ts_match = get_timestamp_match($c_id, $round);
 
   #formazione inviata in orario
-  if ($ts_match > time() || $is_admin) {
+  if ($ts_match > time()) {
 
     $line_up = json_decode($form_state['clicked_button']['#post']['line_up']);
 
@@ -715,7 +714,7 @@ function make_formazione_mobile($t_id, $c_id, $round, $admin = FALSE) {
 
   global $user;
 
-  drupal_add_js('sites/all/modules/fantacalcio/js/lineup_insert.js', null, "footer");
+  drupal_add_js(drupal_get_path("module", "fantacalcio") . "/js/lineup_insert.js", null, "footer");
 
   $players = get_players(get_round_by_competition_round($round, $c_id));
 
@@ -771,7 +770,7 @@ function make_formazione_mobile($t_id, $c_id, $round, $admin = FALSE) {
 
   }
   
-  return "<div id='formazione-mobile'>" . theme_table(array(), $rows) . "</div>";
+  return "<div id='formazione-mobile'>" . theme_table(array(), $rows, array("class" => "table table-responsive")) . "</div>";
 }
 
 function fantacalcio_formazione_insert_players($type = 'new', $t_id, $c_id, $round, $other_c_id = '', $other_round = '', $status = 1) {
@@ -1226,19 +1225,13 @@ function fantacalcio_calcola_multe($num_multe) {
 function choose_formazioni_round_form($form_state, $c_id, $round) {
   $round_formazioni = get_round_formazioni($c_id);
 
-  #$competition_name = get_competition_name($c_id);
-
-  #$out = "\n<h4>" . drupal_get_form("choose_formazioni_round_form", $c_id, $round_formazioni, $arg_round) . "</h4>"; 
-
-  #return $out;
-
   if ($round_formazioni) {
 
     $form['round'] = array(
       '#type' => 'select',
       '#options' => $round_formazioni,
       '#default_value' => $round,
-      '#attributes' => array("data-theme" => "c", "data-mini" => "false", "data-inline" => "true", "onchange" => "this.form.submit()")
+      '#attributes' => array("class" => "form-control", "data-theme" => "c", "data-mini" => "false", "data-inline" => "true", "onchange" => "this.form.submit()")
     );
 
     $form['c_id'] = array(
@@ -1344,10 +1337,10 @@ function position_button($pl_id, $t_id, $c_id, $role, $position = "") {
   $display[$position] = "block";
   
   $out = "";
-  $out .= "<a id='" . $pl_id . "_0' data-role=button data-mini='true' data-iconpos='notext' class='tribuna' onclick='changePosition(" . $pl_id . ", " . $t_id . ", " . $c_id . ", " . $role . ", 1)'  style='display: " . $display[0] . "'>Tribuna</a>";
-  $out .= "<a id='" . $pl_id . "_1' data-role=button data-mini='true' data-iconpos='notext' class='titolare' onclick='changePosition(" . $pl_id . ", " . $t_id . ", " . $c_id . ", " . $role . ", 2)'  style='display: " . $display[1] . "'>Titolare</a>";
-  $out .= "<a id='" . $pl_id . "_2' data-role=button data-mini='true' data-iconpos='notext' class='riserva1' onclick='changePosition(" . $pl_id . ", " . $t_id . ", " . $c_id . ", " . $role . ", 3)' style='display: " . $display[2] . "'>Riserva 1</a>";
-  $out .= "<a id='" . $pl_id . "_3' data-role=button data-mini='true' data-iconpos='notext' class='riserva2' onclick='changePosition(" . $pl_id . ", " . $t_id . ", " . $c_id . ", " . $role . ", 0)' style='display: " . $display[3] . "'>Riserva 2</a>";
+  $out .= "<button id='" . $pl_id . "_0' data-role=button data-mini='true' data-iconpos='notext' class='tribuna btn btn-danger' onclick='changePosition(" . $pl_id . ", " . $t_id . ", " . $c_id . ", " . $role . ", 1)'  style='display: " . $display[0] . "'>Tribuna</button>";
+  $out .= "<button id='" . $pl_id . "_1' data-role=button data-mini='true' data-iconpos='notext' class='titolare btn btn-info' onclick='changePosition(" . $pl_id . ", " . $t_id . ", " . $c_id . ", " . $role . ", 2)'  style='display: " . $display[1] . "'>Titolare</button>";
+  $out .= "<button id='" . $pl_id . "_2' data-role=button data-mini='true' data-iconpos='notext' class='riserva1 btn btn-alert' onclick='changePosition(" . $pl_id . ", " . $t_id . ", " . $c_id . ", " . $role . ", 3)' style='display: " . $display[2] . "'>Riserva 1</button>";
+  $out .= "<button id='" . $pl_id . "_3' data-role=button data-mini='true' data-iconpos='notext' class='riserva2 btn btn-warning' onclick='changePosition(" . $pl_id . ", " . $t_id . ", " . $c_id . ", " . $role . ", 0)' style='display: " . $display[3] . "'>Riserva 2</button>";
   
   return $out;
 }
@@ -1448,7 +1441,7 @@ function check_formazione_insert($t_id, $c_id, $round) {
 function show_line_up_check($checks) {
 
   if (is_mobile()) {
-    $out = "<ul data-role='listview' data-theme='d'>
+    $out = "<ul data-role='listview' >
 			<li><img id='check_number_1' src='" .base_path() . drupal_get_path("module", "fantacalcio") . "/images/" . get_image_check($checks["number_1"]) . "' class='ui-li-icon'>Numero Titolari</li>
 			<li><img id='check_module_1' src='" .base_path() . drupal_get_path("module", "fantacalcio") . "/images/" . get_image_check($checks["module_1"]) . "' class='ui-li-icon'>Modulo Titolari</li>
 			<li><img id='check_number_2_3' src='" .base_path() . drupal_get_path("module", "fantacalcio") . "/images/" . get_image_check($checks["number_2_3"]) . "' class='ui-li-icon'>Numero Riserve</li>

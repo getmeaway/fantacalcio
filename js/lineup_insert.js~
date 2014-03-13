@@ -28,7 +28,7 @@ function changePosition(pl_id, t_id, c_id, role, position) {
 	var blockPosition = (position == 2) ? 1 : 0;
 	var oldPosition = (position + 3) % 4;
 	var positionNames = new Array("Tribuna", "Titolare", "Riserva 1", "Riserva 2");
-
+console.log(pl_id, t_id, c_id, position)
 	$("#" + pl_id + '_' + position).show();
 	//$("#" + pl_id + '_' + oldPosition).children().html(positionNames[oldPosition]);
 	$("#" + pl_id + '_' + oldPosition).hide();		

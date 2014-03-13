@@ -1654,7 +1654,7 @@ function fantacalcio_passaggio_turno($vote_round) {
     //tempi regolamentari in parità --> tempi supplementari
     if (array_sum($goals[$t1]) == array_sum($goals[$t2]) && ( ($goals[$t1]["a"] == $goals[$t2]["a"]) || count($matches_label) == 1)) {
             
-      $overtime = get_overtime($match, variable_get("fantacalcio_votes_provider", 1)); //array(0=>array(t_id, pt_ot, goals_ot), 1=>array(t_id, pt_ot, goals_ot))
+      $overtime = get_overtime($match, variable_get("fantacalcio_votes_provider", 1));
       
       //tempi supplementari
       $rows[$label][] = "<b>" . $overtime[0]['goals_ot'] . "</b> (" . $overtime[0]['pt_ot'] . ")";
@@ -1662,7 +1662,7 @@ function fantacalcio_passaggio_turno($vote_round) {
       
       //tempi supplementari in parità --> rigori
       if ($overtime[0]['goals_ot'] == $overtime[1]['goals_ot']) {
-        $penalties = get_penalties($match);//ar(0=>ar(t_id, goals_penalties=>array(i, gol)),1=>ar(t_id,goals_penalties=>array(i=>gol)))      
+        $penalties = get_penalties($match, variable_get("fantacalcio_votes_provider", 1));
         $last_penalty_index = get_penalties_last_index($penalties);
         //rigori
         $goals_penalties_1 = get_goals_penalties($penalties[0]['goals_penalties'], $last_penalty_index);
@@ -1734,15 +1734,16 @@ function get_overtime($match, $votes_provider) {
   //voti riserve non entrate
   $riserve_team_1 = get_riserve_overtime($match, $match->t1_id, $votes_provider);
   $riserve_team_2 = get_riserve_overtime($match, $match->t2_id, $votes_provider);
-  
-  #if ($match->t2_id == 7) {echo "<pre>"; print_r($riserve_team_1);die("a");}
-  
+
+  $tot_1 = 0;  
+  $tot_2 = 0;
+
   foreach ($riserve_team_1 as $pl_id => $player) {
-    $tot_1 += $votes[$pl_id]->tot;
+    $tot_1 += $votes[$pl_id]->total;
   }
   
   foreach ($riserve_team_2 as $pl_id => $player) {
-    $tot_2 += $votes[$pl_id]->tot;
+    $tot_2 += $votes[$pl_id]->total;
   }
   
   //1° goal: 20pts; poi un goal ogni 4pts
@@ -1764,10 +1765,10 @@ function get_overtime($match, $votes_provider) {
           1 => array('t_id' => $match->t1_id, 'pt_ot' => $tot_2, 'goals_ot' => $goals_ot_2));
 }
 
-function get_penalties($match) {
+function get_penalties($match, $votes_provider) {
   //elenco rigoristi (in ordine)
-  $penalties_players_1 = get_penalties_team($match, $match->t1_id);
-  $penalties_players_2 = get_penalties_team($match, $match->t2_id);
+  $penalties_players_1 = get_penalties_team($match, $match->t1_id, $votes_provider);
+  $penalties_players_2 = get_penalties_team($match, $match->t2_id, $votes_provider);
     
   foreach ($penalties_players_1 as $penalty_position => $penalties_player) {
     $goals_penalties_1[$penalty_position] = array("pl_id" => $penalties_player->pl_id, 'penalty' => $penalties_player->penalty);
@@ -1860,6 +1861,15 @@ function update_goals_penalties($match, $goals_penalties_1, $goals_penalties_2) 
 function get_riserve_overtime($match, $t_id, $votes_provider) {
 
   $roles = array(0, 0, 0);
+
+  //resetto i valori 
+  $sql = "UPDATE {fanta_lineups} 
+      SET has_played = 0 
+      WHERE c_id = '%d'
+      AND round = '%d' 
+      AND t_id = '%d'
+      AND has_played = 2";
+  $result = db_query($sql, get_cid_by_gid($match->g_id), $match->round, $t_id);
   
   //riserve non entrate
   $sql = "SELECT f.pl_id, f.round, f.t_id, f.c_id, p.role FROM {fanta_lineups} f, {fanta_players} p, {fanta_votes} v
@@ -1898,7 +1908,7 @@ function get_penalties_team($match, $t_id, $votes_provider) {
   $votes = get_votes($vote_round);
   $i = 1;
   //rigoristi ordinati
-  $sql = "SELECT * FROM {fanta_lineups} f, {fanta_votes} v
+  $sql = "SELECT f.*, v.vote FROM {fanta_lineups} f, {fanta_votes} v
       WHERE f.pl_id = v.pl_id
       AND f.c_id = '%d' 
       AND v.round = '%d'
@@ -1906,13 +1916,13 @@ function get_penalties_team($match, $t_id, $votes_provider) {
       AND f.t_id = '%d'
 	  AND v.provider = '%d'
       ORDER BY penalty_position";
-  $result = db_query($sql, get_cid_by_gid($match->g_id), $match->round, $match->round, $t_id, $votes_provider);
+  $result = db_query($sql, get_cid_by_gid($match->g_id), get_round_by_competition_round($match->round, get_cid_by_gid($match->g_id)), $match->round, $t_id, $votes_provider);
   while ($row = db_fetch_object($result)) {
     $penalties[$i] = $row;
     $penalties[$i]->penalty = ($row->vote >= 6) ? 1 : 0;
     $i++;
   }
-  
+
   return $penalties;
 }
 

@@ -312,7 +312,7 @@ function show_match_details($m_id) {
         . "</div>";
     
     if ($match->goals_ot_1 == $match->goals_ot_2) {
-      $last_penalty_index = get_penalties_last_index(get_penalties($match));
+      $last_penalty_index = get_penalties_last_index(get_penalties($match, variable_get("fantacalcio_votes_provider", 1)));
       $out .= "<h4>Rigori</h4>";
       
       //penalties team 1
@@ -387,20 +387,20 @@ function show_match_overtime($match, $t_id) {
     //$data[] = "<span class='team-details-role role'>" . convert_role($players[$riserva['pl_id']]->role) . "</span>";
     $data[] = "<span class='team-details-name'>" . compress_string($players[$riserva['pl_id']]->name) . "</span>";
     $data[] = "<span class='team-details-role'>" . substr(ucwords(convert_teams($players[$riserva['pl_id']]->team)), 0, 3) . "</span>";
-    $data[] = get_amm_esp($votes[$pl_id]->amm, $votes[$pl_id]->esp);
-    $data[] = array("data" => $votes[$pl_id]->tot, "class" => get_details_class($votes[$pl_id]->tot) . " team-details-tot");
+    $data[] = get_amm_esp($votes[$pl_id]->yellow_cards, $votes[$pl_id]->red_cards);
+    $data[] = array("data" => $votes[$pl_id]->total, "class" => get_details_class($votes[$pl_id]->total) . " team-details-tot");
     $data[] = array("data" => $votes[$pl_id]->vote, "class" => get_details_class($votes[$pl_id]->vote));
-    $data[] = array("data" => ($votes[$pl_id]->gol_fatto + $votes[$pl_id]->rig_fatto)
-            . (($votes[$pl_id]->rig_fatto > 0) ? "(" . $votes[$pl_id]->rig_fatto . ")" : ""), 
-            "class" => get_details_class(($votes[$pl_id]->gol_fatto + $votes[$pl_id]->rig_fatto),
+    $data[] = array("data" => ($votes[$pl_id]->goals_for + $votes[$pl_id]->penalty_goals)
+            . (($votes[$pl_id]->penalty_goals > 0) ? "(" . $votes[$pl_id]->penalty_goals . ")" : ""), 
+            "class" => get_details_class(($votes[$pl_id]->goals_for + $votes[$pl_id]->penalty_goals),
             "bonus"));
-    $data[] = array("data" => $votes[$pl_id]->gol_subito, "class" => get_details_class($votes[$pl_id]->gol_subito, "malus"));
-    $data[] = array("data" => $votes[$pl_id]->assist, "class" => get_details_class($votes[$pl_id]->assist, "bonus"));
-    $data[] = array("data" => $votes[$pl_id]->rig_sbagliato, "class" => get_details_class($votes[$pl_id]->rig_sbagliato, "malus"));
-    $data[] = array("data" => $votes[$pl_id]->rig_parato, "class" => get_details_class($votes[$pl_id]->rig_parato, "bonus"));
-    $data[] = array("data" => $votes[$pl_id]->autogol, "class" => get_details_class($votes[$pl_id]->autogol, "malus"));
+    $data[] = array("data" => $votes[$pl_id]->goals_against, "class" => get_details_class($votes[$pl_id]->goals_against, "malus"));
+    $data[] = array("data" => $votes[$pl_id]->assists, "class" => get_details_class($votes[$pl_id]->assists, "bonus"));
+    $data[] = array("data" => $votes[$pl_id]->missed_penalties, "class" => get_details_class($votes[$pl_id]->missed_penalties, "malus"));
+    $data[] = array("data" => $votes[$pl_id]->saved_penalties, "class" => get_details_class($votes[$pl_id]->saved_penalties, "bonus"));
+    $data[] = array("data" => $votes[$pl_id]->own_goals, "class" => get_details_class($votes[$pl_id]->own_goals, "malus"));
 
-    $points += $votes[$pl_id]->tot;
+    $points += $votes[$pl_id]->total;
     
     $rows[$pl_id] = array("data" => $data, "class" => "role_" . $players[$pl_id]->role);
 
@@ -433,6 +433,7 @@ function show_match_overtime($match, $t_id) {
 }
 
 function show_match_penalties($match, $t_id, $last_penalty_index) {
+
   $sql = "SELECT round FROM {fanta_rounds_competitions} " .
       "WHERE competition_round = '%d' " .
       "AND c_id = '%d'";
@@ -461,10 +462,10 @@ function show_match_penalties($match, $t_id, $last_penalty_index) {
   $points = 0;
 
   $header[] = array("data" => "", "class" => "team-details-header");
-  $header[] = array("data" => "", "class" => "team-details-header");
+  $header[] = array("data" => "Nome", "class" => "team-details-header");
+  $header[] = array("data" => "Squadra", "class" => "team-details-header");
   $header[] = array("data" => "Voto", "class" => "team-details-header");
-  $header[] = array("data" => "", "class" => "team-details-header");
-  $header[] = array("data" => "", "class" => "team-details-header");
+  $header[] = array("data" => "Rigore", "class" => "team-details-header");
 
   $rows = array();
 
@@ -480,7 +481,7 @@ function show_match_penalties($match, $t_id, $last_penalty_index) {
       $data[] = "<span class='team-details-role'>" . ucwords(convert_teams($players[$penalty['pl_id']]->team)) . "</span>";
       $data[] = array("data" => $votes[$pl_id]->vote, "class" => get_details_class($votes[$pl_id]->vote));
       $data[] = array("data" => get_penalty_result($votes[$pl_id]->vote), 
-              "class" => get_details_class(($votes[$pl_id]->gol_fatto + $votes[$pl_id]->rig_fatto), "bonus"));
+              "class" => get_details_class(($votes[$pl_id]->goals_for + $votes[$pl_id]->penalty_goals), "bonus"));
 
       $points += ($votes[$pl_id]->vote >= 6) ? 1 : 0;
       
