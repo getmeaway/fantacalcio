@@ -1213,8 +1213,8 @@ function fantacalcio_admin_competition_submit($form, &$form_state) {
   if ($form_state["values"]["action"] == "edit") {
     //update competition
     $sql = "UPDATE {fanta_competitions} SET name = '%s', type = '%s', 
-        active = '%d', calendario = '%d', 
-        classifica = '%d', formazioni = '%d', newsletter = '%d' 
+        active = '%d', calendar = '%d', 
+        standings = '%d', lineups = '%d', newsletter = '%d' 
         WHERE c_id = '%d'";
     $result = db_query($sql, $form_state["values"]["name"], $form_state["values"]["type"],
               $form_state["values"]["active"], $form_state["values"]["calendario"], 
@@ -1225,7 +1225,7 @@ function fantacalcio_admin_competition_submit($form, &$form_state) {
   }
   elseif ($form_state["values"]["action"] == "create") {
     //crea competition
-    $sql = "INSERT INTO {fanta_competitions} (name, type, active, calendario, classifica, formazioni, newsletter) 
+    $sql = "INSERT INTO {fanta_competitions} (name, type, active, calendar, standings, lineups, newsletter) 
         VALUES ('%s', '%s', '%d', '%d', '%d', '%d', '%d')";
     $result = db_query($sql, $form_state["values"]["name"], $form_state["values"]["type"],
               $form_state["values"]["active"], $form_state["values"]["calendario"], 
